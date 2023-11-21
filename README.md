@@ -168,3 +168,286 @@ afs  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sb
 </table>
 
 <h3>Managing Files from Command Line</h3>
+<ol>
+  <li>mv</li>
+  <li>rm</li>
+  <li>mkdir</li>
+  <li>touch</li>
+  <li>cp</li>
+</ol>
+<h4>Moving Files using 'mv' Command</h4>
+<p>To Move files/Rename files/Directories</p>
+<pre>
+[diwakar@dev ~]$ # To MaKe DIRectories use mkdir
+[diwakar@dev ~]$ mkdir test1 test2
+[diwakar@dev ~]$ # Copying files to directories
+[diwakar@dev ~]$ cp file1 file2 test1/
+[diwakar@dev ~]$ # moving files to directories
+[diwakar@dev ~]$ mv file1 test2/
+[diwakar@dev ~]$ # renaming file using mv
+[diwakar@dev ~]$ mv file2 test2.txt
+[diwakar@dev ~]$ # moving file and selectively re-writing files
+[diwakar@dev ~]$ mv -iv file2 test1
+mv: overwrite 'test1/file2'? y
+renamed 'file2' -> 'test1/file2'
+[diwakar@dev ~]$ # moving directories to other directory
+[diwakar@dev ~]$ mv test1/ test2/
+[diwakar@dev ~]$ # copying directories
+[diwakar@dev ~]$ cp -R test2 test3
+</pre>
+<h3>Managing and Creating Links</h3>
+<img src="links.JPG">
+<p>When a file is created, a link to path is created to actual storage block which you can verify with "$ls -l" you see no of links is "1".When you create a hard link you are referencing directly to storage location/block, to the path ,to file you are created.So you are given the same inode block no if you verify through "$ls -li".On contrast when you create a SOFT LINK you are acually referencing to a file location.So by this you can understand that if actual file is delete only hard linked file has the content.And both has it advantages and disadvantages.It depends purely on the usecase.For Ex:- if for backup or restore you go for hardlinks.if for creating shortlinks to s/w you go for soft links.You can't hardlink a directory.</p>
+<p>Let's see them in action</p>
+<pre>
+[diwakar@dev ~]$ ls -li
+total 4
+      144 -rw-r--r--. 1 diwakar diwakar 14 Nov 18 15:03 file3
+134217856 drwxr-xr-x. 3 diwakar diwakar 32 Nov 18 15:08 test2
+268695680 drwxr-xr-x. 3 diwakar diwakar 32 Nov 18 15:12 test3
+[diwakar@dev ~]$ ls -li test2
+total 4
+140 -rw-r--r--. 1 diwakar diwakar 14 Nov 18 12:52 file1
+143 drwxr-xr-x. 2 diwakar diwakar 32 Nov 18 15:07 test1
+[diwakar@dev ~]$ ls -li test2/test1/
+total 8
+145 -rw-r--r--. 1 diwakar diwakar 14 Nov 18 15:04 file1
+141 -rw-r--r--. 1 diwakar diwakar 14 Nov 18 12:52 file2
+[diwakar@dev ~]$ ls -lai test2/test1/
+total 8
+      143 drwxr-xr-x. 2 diwakar diwakar 32 Nov 18 15:07 .
+134217856 drwxr-xr-x. 3 diwakar diwakar 32 Nov 18 15:08 ..
+      145 -rw-r--r--. 1 diwakar diwakar 14 Nov 18 15:04 file1
+      141 -rw-r--r--. 1 diwakar diwakar 14 Nov 18 12:52 file2
+###########################################################################
+[diwakar@dev ~]$ ln -s /home/diwakar/soft_link.txt /tmp/sl.txt
+[diwakar@dev ~]$ cat /tmp/sl.txt
+this is soft link
+sorry a regular file
+[diwakar@dev ~]$ ln /home/diwakar/hard_links.txt /tmp/hl.txt
+ln: failed to create hard link '/tmp/hl.txt' => '/home/diwakar/hard_links.txt': Invalid cross-device link
+[diwakar@dev ~]$ df /tmp
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sda2      247343104 4739576 242603528   2% /
+[diwakar@dev ~]$ df /home
+Filesystem     1K-blocks    Used Available Use% Mounted on
+/dev/sda5      266206212 1889184 264317028   1% /home
+[diwakar@dev ~]$ ln /home/diwakar/hard_links.txt /home/diwakar/test3/hl.txt
+[diwakar@dev ~]$ cat /home/diwakar/test3/hl.txt
+To test Hardlinks
+[diwakar@dev ~]$ rm -rf /home/diwakar/hard_links.txt
+[diwakar@dev ~]$ cat /home/diwakar/test3/hl.txt
+To test Hardlinks
+</pre>
+<h3>File Globbing & Pattern Matching</h3>
+<pre>
+[diwakar@dev fileglob]$ touch abc bcd cde def efg fgh ghi hij ijk jkl klm lmn mno nop opq pqr
+[diwakar@dev fileglob]$ ls
+abc  bcd  cde  def  efg  fgh  ghi  hij  ijk  jkl  klm  lmn  mno  nop  opq  pqr
+[diwakar@dev fileglob]$ ls a*
+abc
+[diwakar@dev fileglob]$ ls b*
+bcd
+[diwakar@dev fileglob]$ ls a* b* c*
+abc  bcd  cde
+[diwakar@dev fileglob]$ ls *b*
+abc  bcd
+[diwakar@dev fileglob]$ ls [bc]*
+bcd  cde
+[diwakar@dev fileglob]$ ls ?
+ls: cannot access '?': No such file or directory
+[diwakar@dev fileglob]$ ls ???
+abc  bcd  cde  def  efg  fgh  ghi  hij  ijk  jkl  klm  lmn  mno  nop  opq  pqr
+[diwakar@dev fileglob]$ echo {A..Z}.log
+A.log B.log C.log D.log E.log F.log G.log H.log I.log J.log K.log L.log M.log N.log O.log P.log Q.log R.log S.log T.log U.log V.log W.log X.log Y.log Z.log
+[diwakar@dev fileglob]$ echo file{0..9}.log
+file0.log file1.log file2.log file3.log file4.log file5.log file6.log file7.log file8.log file9.log
+[diwakar@dev fileglob]$ mkdir rhel{0..2}.txt
+[diwakar@dev fileglob]$ ls rhel*
+rhel0.txt:
+rhel1.txt:
+rhel2.txt:
+[diwakar@dev ~]$ # Variable expansion
+[diwakar@dev ~]$ ENVIRONMENT=dev
+[diwakar@dev ~]$ echo ${ENVIRONMENT}
+dev
+[diwakar@dev ~]$ # Command Substitution
+[diwakar@dev ~]$ echo Today is $(date +%A)
+Today is Monday
+[diwakar@dev ~]$ # Restricting expansion
+[diwakar@dev ~]$ echo "I am currently working $HOME directory"
+I am currently working /home/diwakar directory
+[diwakar@dev ~]$ echo "I am currently working \$HOME directory"
+I am currently working $HOME directory
+</pre>
+<h3>Getting help in Linux using man command and --help option</h3>
+<ul><li>'man -t' to print output to a file</li><li>man -k to search man page </li><li>evince -i 3 to read</li></ul>
+<pre>
+[diwakar@dev ~]$ man evince
+[diwakar@dev ~]$ evince --help
+Usage:
+  evince [OPTION…] [FILE…] GNOME Document Viewer
+
+Help Options:
+-h, --help Show help options
+--help-all Show all help options
+--help-gtk Show GTK+ Options
+
+Application Options:
+-p, --page-label=PAGE The page label of the document to display.
+-i, --page-index=NUMBER The page number of the document to display.
+-n, --named-dest=DEST Named destination to display.
+-f, --fullscreen Run evince in fullscreen mode
+-s, --presentation Run evince in presentation mode
+-w, --preview Run evince as a previewer
+-l, --find=STRING The word or phrase to find in the document
+--display=DISPLAY X display to use
+
+</pre>
+<h3>Create,view and Edit Text Files</h3>
+<h4>Redirection Using File Descriptors 0(stdin),1(stdout),2(stderror)</h4>
+<pre>
+[diwakar@dev ~]$ ls -la . /pmt 1> list_of_files.txt 2>/dev/null
+[diwakar@dev ~]$ ls -la . /pmt > list_of_files.txt 2>&1
+[diwakar@dev ~]$ ls -la . /pmt 1> list_of_files.txt
+ls: cannot access '/pmt': No such file or directory
+</pre>
+<h4>Piping Concept 0(stdin)-->1(stdout) </h4>
+<pre>
+[diwakar@dev ~]$ ls -l | tee fresh_list
+[diwakar@dev ~]$ ls -la | tee -a fresh_list
+</pre>
+<h3>Shell Environment</h3>
+<h4>Defining and controlling shell env with Variables</h4>
+<pre>
+[diwakar@dev ~]$ # Learning shell environment
+[diwakar@dev ~]$ # Assign values to variables
+[diwakar@dev ~]$ COUNT=40
+[diwakar@dev ~]$ First_Name=Diwkar
+[diwakar@dev ~]$ file=~
+[diwakar@dev ~]$ _ID=12345
+[diwakar@dev ~]$ set | less
+[diwakar@dev ~]$ set | grep COUNT
+COUNT=40
+[diwakar@dev ~]$ set | grep First_Name
+First_Name=Diwkar
+[diwakar@dev ~]$ echo $file
+/home/diwakar
+[diwakar@dev ~]$ echo Repeat ${COUNT}x
+Repeat 40x
+[diwakar@dev ~]$ export PS1="[\u@\h \w]$ {}"
+[diwakar@dev ~]$ {}
+[diwakar@dev ~]$ {}export PS1="[\u@\h \w]$"
+[diwakar@dev ~]$
+# you can check online for more styles to customize your bash prompt
+# to craete alias and unset variables and unalias aliases
+[diwakar@dev ~]$alias l=ls
+[diwakar@dev ~]$l
+fileglob  fresh_list  list_of_files.txt  passwd.ps  test3
+[diwakar@dev ~]$l -l
+total 32
+drwxr-xr-x. 5 diwakar diwakar  4096 Nov 20 08:38 fileglob
+-rw-r--r--. 1 diwakar diwakar  1652 Nov 20 12:43 fresh_list
+[diwakar@dev ~]$ unalias l
+[diwakar@dev ~]$ l
+-bash: l: command not found
+</pre>
+<p>To make changes at system level /etc/profile(interactive) and /etc/bashrc(non-interactive), .bash-profile and .bashrc for the same at local level</p>
+<h3>Users and Groups</h3>
+<p>User accounts helps linux to be secure and helps process isolation(Generally User owning process or who executes the command/script/background job .process work on the files and resources which user had access)</p>
+<h5>Three Type of Users</h5>
+<ol>
+<li>Super User (Has Full acces and control over system)</li>
+<li>System Users(Has limited access over files and Processes that system process has to work on)</li>
+<li>Regular Users(Has interactive shell and operate on terminal and has limited access to only files it owns)</li>
+</ol>
+<pre>
+[diwakar@dev ~]$ # id command help to get some info about current user
+[diwakar@dev ~]$ id
+uid=1000(diwakar) gid=1000(diwakar) groups=1000(diwakar),1001(admin) context=unconfined_u:unconfined_r:unconfined_t:s0-s0:c0.c1023
+[diwakar@dev ~]$ # id <user_name> helps to identify the username you provided as argument and get his/her details
+[diwakar@dev ~]$ id root
+uid=0(root) gid=0(root) groups=0(root)
+[diwakar@dev ~]$ # ps -au fetches info of -aLL process that and -uSER owning the process related to current terminal
+[diwakar@dev ~]$ ps -au
+USER         PID %CPU %MEM    VSZ   RSS TTY      STAT START   TIME COMMAND
+root         809  0.0  0.1   3064  1084 tty1     Ss+  00:14   0:00 /sbin/agetty -o -p -- \u --noclear - linux
+diwakar     1018  0.0  0.5   8708  5584 pts/0    Ss   00:15   0:00 -bash
+diwakar     1089  0.0  0.3  10104  3400 pts/0    R+   00:48   0:00 ps -au
+</pre>
+<p>As you have seen the output ps -au lists process with usernam but internally os relates the same with uid<br>
+The mapping of uid with its details is placed in system wide config files location as /etc/passwd db.</p>
+<pre>
+jenkins:x:979:978:Jenkins Automation Server:/var/lib/jenkins:/bin/false
+[diwakar@dev ~]$ cat /etc/passwd|head -n4
+root:x:0:0:root:/root:/bin/bash
+bin:x:1:1:bin:/bin:/sbin/nologin
+daemon:x:2:2:daemon:/sbin:/sbin/nologin
+adm:x:3:4:adm:/var/adm:/sbin/nologin
+</pre>
+<p>root(user-name),x(place-holder for passwd),0(userid),0(groupid),root(desc of user),/bin/bash(shell type)</p>
+<h4>Groups</h4>
+<p>Groups help to group users and provide access to resources as a group.Groups have GID and are placed in /etc/group</p>
+<pre>
+[diwakar@dev ~]$ cat /etc/group | grep admin
+admin:x:1001:diwakar
+</pre>
+<p>admin(group name),x(placeholder),1001(group id),(diwakar,,,)-comma seperated list of users present in group</p>
+<h3>Sudo,su,su -</h3>
+<p>SUper users DO(do what super users do(-i(root interactive shell),-s(non interactive root shell)))<br/>Switch User(non interactive shell),Switch User -(As interactive shell)</p>
+<pre>
+[diwakar@dev ~]$ # Understanding su 'su -' sudo .How root user performs actions
+[diwakar@dev ~]$ sudo useradd -md /home/raju -s /bin/bash raju
+[sudo] password for diwakar:
+[diwakar@dev ~]$ sudo useradd -md /home/valivarthi -s /bin/bash valivarthi
+[diwakar@dev ~]$ grep raju /etc/passwd
+raju:x:1001:1002::/home/raju:/bin/bash
+[diwakar@dev ~]$ grep valivarthi /etc/passwd
+valivarthi:x:1002:1003::/home/valivarthi:/bin/bash
+[diwakar@dev ~]$ sudo passwd raju
+Changing password for user raju.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[diwakar@dev ~]$ sudo passwd valivarthi
+Changing password for user valivarthi.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+</pre>
+<p>When  we want escalte our privilege to DO some SUper user task like installating,removing packages,Daily admin tasks it is required that super user or admin provide us similar privileges.It is generally done using /etc/sudeors config file.As many admin's try to edit the file.we have a command "visudo" to open the file in vi editor .Getting into config through command helps syntax validation</p>
+<p>Let us provide the user "raju" with such privileges</p>
+<pre>
+[diwakar@dev ~]$ sudo visudo
+[sudo] password for diwakar:
+[diwakar@dev ~]$ su - raju
+Password:
+[raju@dev ~]$ sudo systemctl status tomcat
+
+We trust you have received the usual lecture from the local System
+Administrator. It usually boils down to these three things:
+
+    #1) Respect the privacy of others.
+    #2) Think before you type.
+    #3) With great power comes great responsibility.
+
+[sudo] password for raju:
+Unit tomcat.service could not be found.
+[raju@dev ~]$
+
+</pre>
+<p>Format user_name/%group name   (ALL)=(ALL:ALL)  ALL</p>
+<ul>
+<li>USERNAME/%group - username/group that you want to provide access</li>
+<li>(ALL) - Provide hostname or ALL stands for ALL hosts this user/group will have access to .if it has the same file</li>
+<li>(ALL: - You can actually specify a particular user,that you want to inherit the permission or run the privilleges as that user.(ALL: tells that you can run process as any other user access</li>
+<li>:ALL) - You can actually provide a groupname,all the privilleges that the specified group has sam epermissions apply to this user.ALL stands that user can run or has permissions similar to all local groups</li>
+<li>ALL - you can actually mention a comma seperated list of command locations that user can run using sudo or give ALL to run any command.Additional any other param's can also be provided</li>
+</ul>
+<p>Examples:-<br/>"raju (ALL)=(ALL:ALL) ALL"<br/>
+"%admin (ALL)=(ALL)  ALL"<br/>"valivarthi/%monitoring (ALL)=(operator) /bin/id"<br/>"ansible (ALL)=(ALL) NOPASSWD:ALL"
+</p>
+<p>Note : as /etc/sudoers.d id included in /etc/sudoers file using Include directive .You can actually add files under the directory generally as .conf and add rules specific to user .And when you wnt to remove the access to user .You can actually remove the file.Instead of changing entries in sudeors</p>
+<p>Note : The messages related to access are logged in /var/log/secure<br/>You can use "tail -50f /var/log/secure" to dynamically check access logs </p>
