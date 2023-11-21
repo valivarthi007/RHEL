@@ -509,7 +509,11 @@ CREATE_MAIL_SPOOL=yes
   </tr>
   <tr>
     <td>e</td>
-    <td>Set the expiry date </td>
+    <td>Set the expiry date 'yyyy-mm-dd'</td>
+  </tr>
+  <tr>
+    <td>f</td>
+    <td>No of days user account is in-active after expiry</td>
   </tr>
   <tr>
     <td>g</td>
@@ -545,3 +549,11 @@ CREATE_MAIL_SPOOL=yes
 [sudo] password for diwakar:
 [diwakar@dev ~]$ sudo useradd -md /home/valivarthi -s /bin/bash valivarthi
 </pre>
+<p>usermod has similar options as useradd.(L) for locking user account and (U) for unlocking user account</p>
+<p>Password is set using "passwd <\username> Command</p>
+<ol>
+  <li>0-For root</li>
+  <li>1-200 for system users to run system process</li>
+  <li>201-999 for sys processes that don't own files</li>
+  <li>Regular and under priviledged users (1000>)</li>
+</ol>
