@@ -451,3 +451,97 @@ Unit tomcat.service could not be found.
 </p>
 <p>Note : as /etc/sudoers.d id included in /etc/sudoers file using Include directive .You can actually add files under the directory generally as .conf and add rules specific to user .And when you wnt to remove the access to user .You can actually remove the file.Instead of changing entries in sudeors</p>
 <p>Note : The messages related to access are logged in /var/log/secure<br/>You can use "tail -50f /var/log/secure" to dynamically check access logs </p>
+<h3>Creating local user account</h3>
+<p>As we already discussed about local user acc's and how they help in process isolation.Now we create them.By default when user is craeted he/she is assigned with User id ,Which by default is > 1000 .And we can always override the defaults.You can check the user acc defaults at /etc/login.defs file for login definitions.And the same can be checked using useradd -D and for procelain command useradd --help to get started</p>
+<pre>
+[diwakar@dev ~]$ cat /etc/login.defs
+      # Min/max values for automatic uid selection in useradd(8)
+      #
+      UID_MIN                  1000
+      UID_MAX                 60000
+      # System accounts
+      SYS_UID_MIN               201
+      SYS_UID_MAX               999
+      # Extra per user uids
+      SUB_UID_MIN                100000
+      SUB_UID_MAX             600100000
+      SUB_UID_COUNT               65536
+      ENCRYPT_METHOD SHA512
+      # If useradd(8) should create home directories for users by default (non
+      # system users only).
+      # This option is overridden with the -M or -m flags on the useradd(8)
+      # command-line.
+      #
+      CREATE_HOME     yes
+      # Enables userdel(8) to remove user groups if no members exist.
+      #
+      USERGROUPS_ENAB yes
+[diwakar@dev ~]$ useradd -D
+GROUP=100
+HOME=/home
+INACTIVE=-1
+EXPIRE=
+SHELL=/bin/bash
+SKEL=/etc/skel   //skel contains default dir structure for home to be copied for each user
+CREATE_MAIL_SPOOL=yes
+</pre>
+<p>UserAdd Options</p>
+<table>
+  <tr>
+    <th>Option</th>
+    <th>Usage</th>
+  </tr>
+  <tr>
+    <td>!(a)</td>
+    <td>Actually a is used in usermod to change the modality of user.It stands for append Additional Groups</td>
+  </tr>
+  <tr>
+    <td>b</td>
+    <td>Change the base home directory for user when defining user</td>
+  </tr>
+  <tr>
+    <td>C</td>
+    <td>To add Comments/Description what is User</td>
+  </tr>
+  <tr>
+    <td>d</td>
+    <td>Actually followed by 'm' option to specify users home directory</td>
+  </tr>
+  <tr>
+    <td>e</td>
+    <td>Set the expiry date </td>
+  </tr>
+  <tr>
+    <td>g</td>
+    <td>To change the default group id</td>
+  </tr>
+  <tr>
+    <td>G</td>
+    <td>To add secondary group other than user private group</td>
+  </tr>
+  <tr>
+    <td>m</td>
+    <td>To tell the command to move user home directory</td>
+  </tr>
+  <tr>
+    <td>M</td>
+    <td>To not create users home directory</td>
+  </tr>
+  <tr>
+    <td>r</td>
+    <td>To create a system account</td>
+  </tr>
+  <tr>
+    <td>s</td>
+    <td>To tell command add the shell for user to operate on</td>
+  </tr>
+  <tr>
+    <td>u</td>
+    <td>To change the default user id</td>
+  </tr>
+</table>
+<pre>
+[diwakar@dev ~]$ sudo useradd -md /home/raju -s /bin/bash raju
+[sudo] password for diwakar:
+[diwakar@dev ~]$ sudo useradd -md /home/valivarthi -s /bin/bash valivarthi
+</pre>
