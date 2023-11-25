@@ -131,6 +131,7 @@ this is file2
 
 <h3>Getting history of our Command Lines</h3>
 <p>Viewing history or your command trail helps to track incase of debugging and troubleshooting</p>
+
 ```bash
   [diwakar@dev ~]$ # history command provides ur commands trail in shell
   [diwakar@dev ~]$ # !number finishes your command in history
@@ -139,11 +140,14 @@ this is file2
   [diwakar@dev ~]$ !!
   cat /etc/passwd
 ```
+
 <h3>Navigating RHEL File System</h3>
+
 ```bash
   [diwakar@dev /]$ ls
   afs  bin  boot  dev  etc  home  lib  lib64  media  mnt  opt  proc  root  run  sbin  srv  sys  tmp  usr  var
 ```
+
 <table>
 <tr>
   <th><b>Path</b></th>
@@ -916,7 +920,6 @@ or available locally via: info '(coreutils) chmod invocation'
 <p>OCTAL modes also take part in OPTIONS</p>
 
 ```bash
-
   [diwakar@dev ~]$ # Changing the mode of a file
   [diwakar@dev ~]$ ls -l test
   -rw-r--r--. 1 diwakar diwakar 0 Nov 25 07:08 test
@@ -943,6 +946,7 @@ or available locally via: info '(coreutils) chmod invocation'
 ```
 
 <p>To reduce the redundancy overhead/being specific about permissions we need symbolic access</p>
+
 ```bash
   [diwakar@dev ~]$ chmod g+r test
   [diwakar@dev ~]$ ls -l test
@@ -960,7 +964,9 @@ or available locally via: info '(coreutils) chmod invocation'
   [diwakar@dev ~]$ ls -l test
   -rw-r--r--. 1 diwakar diwakar 0 Nov 25 07:08 test
 ```
+
 <h4>Getting some insights into permission Defaults and Special Permissions</h4>
+
 ```bash
   [diwakar@dev ~]$ chown :admin test
   [diwakar@dev ~]$ ls -l test
