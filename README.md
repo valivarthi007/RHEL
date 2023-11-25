@@ -1013,3 +1013,39 @@ drwxrwxrwt 12 root root 4096 Nov 20 09:00 /tmp
 In the `/tmp` directory, the sticky bit is set (`t` in the other execute position). This ensures that users can only delete or rename their own files within the directory, promoting a secure and shared environment for temporary files.
 
 These special permissions offer additional control over the execution and management of files and directories, contributing to system security and access control.
+
+### Umask
+
+The `umask` is a command and a value that sets default permissions for newly created files and directories. It is used to control the default permission settings for files and directories created by users, processes, or programs.
+
+#### Usage:
+
+The `umask` value is subtracted from the default permission settings, resulting in the final permissions. The default permission for files is 666 (read and write for owner, group, and others), and for directories, it is 777 (read, write, and execute for owner, group, and others).
+
+#### Setting Umask:
+
+- To set the `umask` for the current shell session, use the `umask` command followed by the desired value.
+
+  ```bash
+  umask 022
+  ```
+
+- To make the `umask` persistent across sessions, add the `umask` command to the shell profile file (e.g., `.bashrc` or `.bash_profile`).
+
+#### Umask Values:
+
+The `umask` value is typically expressed in octal format, representing the permissions to be turned off. For example:
+
+- `umask 022` means that write permissions are turned off for group and others.
+- `umask 027` means that write and execute permissions are turned off for group and write permission is turned off for others.
+
+#### Example:
+
+```bash
+$ umask
+0022
+```
+
+In this example, the `umask` value is `0022`, which means that write permission is turned off for group and others. Therefore, when a new file is created, it will have default permissions of 644 (read and write for owner, read for group and others), and for a new directory, it will have default permissions of 755 (read, write, and execute for owner, read and execute for group and others).
+
+Understanding and properly configuring the `umask` is important for maintaining security and controlling access to files and directories in a Linux environment.
