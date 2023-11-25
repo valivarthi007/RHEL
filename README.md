@@ -557,3 +557,155 @@ CREATE_MAIL_SPOOL=yes
   <li>201-999 for sys processes that don't own files</li>
   <li>Regular and under priviledged users (1000>)</li>
 </ol>
+<pre>
+[diwakar@dev ~]$ cat /etc/passwd | grep valivarthi
+valivarthi:x:1002:1003::/home/valivarthi:/bin/bash
+[diwakar@dev ~]$ sudo passwd valivarthi
+[sudo] password for diwakar:
+Changing password for user valivarthi.
+New password:
+BAD PASSWORD: The password is shorter than 8 characters
+Retype new password:
+passwd: all authentication tokens updated successfully.
+[diwakar@dev ~]$
+</pre>
+<h3>Group Management</h3>
+<p>Groups are used to make access management easy by grouping a set of user who need similar privileges into one group and provide access</p>
+<p>Procelian commands are as below</p>
+<pre>
+[diwakar@dev ~]$ groupadd --help
+Usage: groupadd [options] GROUP
+
+Options:
+-f, --force exit successfully if the group already exists,
+and cancel -g if the GID is already used
+-g, --gid GID use GID for the new group
+-h, --help display this help message and exit
+-K, --key KEY=VALUE override /etc/login.defs defaults
+-o, --non-unique allow to create groups with duplicate
+(non-unique) GID
+-p, --password PASSWORD use this encrypted password for the new group
+-r, --system create a system account
+-R, --root CHROOT_DIR directory to chroot into
+-P, --prefix PREFIX_DI directory prefix
+-U, --users USERS list of user members of this group
+
+</pre>
+<p>Creating group with most of options above</p>
+<pre>
+[diwakar@dev ~]$ sudo groupadd -r administrators
+[diwakar@dev ~]$ grep administrators /etc/group
+administrators:x:977:
+[diwakar@dev ~]$ grep -i developer /etc/group
+developer:x:2001:
+[diwakar@dev ~]$ grep -ni developer /etc/group
+61:developer:x:2001:
+[diwakar@dev ~]$ getent group
+root:x:0:
+bin:x:1:
+[diwakar@dev ~]$ sudo groupdel administrators
+[diwakar@dev ~]$ sudo groupdel develop
+[diwakar@dev ~]$ grep develop /etc/group
+[diwakar@dev ~]$ grep administrators /etc/group
+[diwakar@dev ~]$
+[diwakar@dev ~]$ newgrp admins
+newgrp: group 'admins' does not exist
+[diwakar@dev ~]$ newgrp admin
+[diwakar@dev ~]$ touch testing-newgrp
+[diwakar@dev ~]$ ls -l testing-newgrp
+-rw-r--r--. 1 diwakar admin 0 Nov 24 18:43 testing-newgrp
+</pre>
+<p>Welcome to Password management.Let us analyze the contents of passowrd config file /etc/shadow</p>
+<pre>
+$ sudo cat /etc/shadow
+raju:$6$bSeBQ5VJikvauY/0$r3zW8O6KHdz8qKKIew93qrZXJEG7X2f5t053Rxg5i08jPfVPE9O7Pxwai8VkPKBdhevetKvNst1Sr1htj5Tdn.:19682:0:99999:7:::
+</pre>
+<p>Let us analayze it</p>
+<ol>
+<li>raju : </li> User Name
+<li>6 : </li> Hashing encrption in use : It's SHA-512
+<li>bSeBQ5VJikvauY/0 : </li> Random salt Generated
+<li>r3zW8O6KHdz8qKKIew93qrZXJEG7X2f5t053Rxg5i08jPfVPE9O7Pxwai8VkPKBdhevetKvNst1Sr1htj5Tdn : </li> Generated Hash for Password
+<li>19682 : </li>Days since epoch(1970-1-1) password left unchanged
+<li>0 : </li>minimum days since last password the user can change again
+<li>999999 : </li>maximum days since last passowrd the password expires
+<li>7 : </li>  no of days days ahead to warn user
+<li>::</li> No of days after expiry the account is automatically locked
+<li>::</li> Th day when acc expired since epoch
+</ol>
+<img src="Password Authentication.png">
+<p>Aging of password and user account in relation to password age</p>
+<img src="Password Age.png">
+<h4>CHange the AGE of password using (chage)</h4>
+<p>As usual getting help from command line</p>
+<pre>
+[diwakar@dev ~]$ chage --help
+Usage: chage [options] LOGIN
+
+Options:
+-d, --lastday LAST_DAY set date of last password change to LAST_DAY
+-E, --expiredate EXPIRE_DATE set account expiration date to EXPIRE_DATE
+-h, --help display this help message and exit
+-i, --iso8601 use YYYY-MM-DD when printing dates
+-I, --inactive INACTIVE set password inactive after expiration
+to INACTIVE
+-l, --list show account aging information
+-m, --mindays MIN_DAYS set minimum number of days before password
+change to MIN_DAYS
+-M, --maxdays MAX_DAYS set maximum number of days before password
+change to MAX_DAYS
+-R, --root CHROOT_DIR directory to chroot into
+-W, --warndays WARN_DAYS set expiration warning days to WARN_DAYS
+
+[diwakar@dev ~]$ chage -l
+Usage: chage [options] LOGIN
+
+Options:
+-d, --lastday LAST_DAY set date of last password change to LAST_DAY
+-E, --expiredate EXPIRE_DATE set account expiration date to EXPIRE_DATE
+-h, --help display this help message and exit
+-i, --iso8601 use YYYY-MM-DD when printing dates
+-I, --inactive INACTIVE set password inactive after expiration
+to INACTIVE
+-l, --list show account aging information
+-m, --mindays MIN_DAYS set minimum number of days before password
+change to MIN_DAYS
+-M, --maxdays MAX_DAYS set maximum number of days before password
+change to MAX_DAYS
+-R, --root CHROOT_DIR directory to chroot into
+-W, --warndays WARN_DAYS set expiration warning days to WARN_DAYS
+
+</pre>
+<p>Checking the current configuration</p>
+<pre>
+[diwakar@dev ~]$ sudo chage -l raju
+[sudo] password for diwakar:
+Last password change                                    : Nov 21, 2023
+Password expires                                        : never
+Password inactive                                       : never
+Account expires                                         : never
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 99999
+Number of days of warning before password expires       : 7
+raju:$6$bSeBQ5VJikvauY/0$r3zW8O6KHdz8qKKIew93qrZXJEG7X2f5t053Rxg5i08jPfVPE9O7Pxwai8VkPKBdhevetKvNst1Sr1htj5Tdn.:19682:0:99999:7:::
+[diwakar@dev ~]$ # we now change password aging of raju
+[diwakar@dev ~]$ sudo chage -m 0 -M 12 -W 7 -I 7 raju
+[diwakar@dev ~]$ sudo chage -l raju
+Last password change                                    : Nov 21, 2023
+Password expires                                        : Dec 03, 2023
+Password inactive                                       : Dec 10, 2023
+Account expires                                         : never
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 12
+Number of days of warning before password expires       : 7
+[diwakar@dev ~]$ # changing the expiry date for user raju to 30 days from now
+[diwakar@dev ~]$ sudo chage -E $(date -d "+30 days" +%F) raju
+[diwakar@dev ~]$ sudo chage -l raju
+Last password change                                    : Nov 21, 2023
+Password expires                                        : Dec 03, 2023
+Password inactive                                       : Dec 10, 2023
+Account expires                                         : Dec 25, 2023
+Minimum number of days between password change          : 0
+Maximum number of days between password change          : 12
+Number of days of warning before password expires       : 7
+</pre>
