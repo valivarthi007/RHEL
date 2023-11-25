@@ -708,4 +708,62 @@ Account expires                                         : Dec 25, 2023
 Minimum number of days between password change          : 0
 Maximum number of days between password change          : 12
 Number of days of warning before password expires       : 7
+[diwakar@dev ~]$ # To make user change passowrd immediatley after login
+[diwakar@dev ~]$ sudo chage -d 0 raju
+[sudo] password for diwakar:
+Sorry, try again.
+[sudo] password for diwakar:
+[diwakar@dev ~]$ su - raju
+Password:
+You are required to change your password immediately (administrator enforced).
+Current password:
+Current Password:
+su: Authentication token manipulation error
+[diwakar@dev ~]$ su - raju
+Password:
+You are required to change your password immediately (administrator enforced).
+Current password:
+New password:
+BAD PASSWORD: The password differs with case changes only
+su: Authentication token manipulation error
+</pre>
+<p>Password Aging Defaults</p>
+<pre>
+[diwakar@dev ~]$ grep 'PASS_' /etc/login.defs
+#       PASS_MAX_DAYS   Maximum number of days a password may be used.
+#       PASS_MIN_DAYS   Minimum number of days allowed between password changes.
+#       PASS_MIN_LEN    Minimum acceptable password length.
+#       PASS_WARN_AGE   Number of days warning given before a password expires.
+PASS_MAX_DAYS   99999
+PASS_MIN_DAYS   0
+PASS_WARN_AGE   7
+# Currently PASS_MIN_LEN is not supported
+# Currently PASS_CHANGE_TRIES is not supported
+# Currently PASS_ALWAYS_WARN is not supported
+# Currently PASS_MAX_LEN is not supported
+</pre>
+<p>Locking and unlocking user accounts</p>
+<pre>
+[diwakar@dev ~]$ sudo usermod -L raju
+[diwakar@dev ~]$ su - raju
+Password:
+su: Authentication failure
+[diwakar@dev ~]$ sudo usermod -U raju
+[diwakar@dev ~]$ su - raju
+Password:
+You are required to change your password immediately (administrator enforced).
+</pre>
+<p>Expiring user when he leave organisation</p>
+<pre>
+[diwakar@dev ~]$ sudo usermod -L -e 2023-11-25 raju
+[diwakar@dev ~]$ su - raju
+Password:
+su: Authentication failure
+[diwakar@dev ~]$ # setting a user to non-interactive user
+[diwakar@dev ~]$ sudo usermod -s /sbin/nologin valivarthi
+[diwakar@dev ~]$ su - valivarthi
+Password:
+This account is currently not available.
+[diwakar@dev ~]$ sudo userdel -r raju
+[diwakar@dev ~]$ sudo userdel -r valivarthi
 </pre>
